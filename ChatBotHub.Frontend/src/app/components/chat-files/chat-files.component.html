@@ -1,0 +1,13 @@
+<div class="layout">
+    <mat-card *ngFor="let file of chatBot?.files">
+        <mat-card-header>
+            <mat-card-title>{{ file.fileName }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-form-field>
+                <mat-label>File description</mat-label>
+                <textarea matInput></textarea>
+            </mat-form-field>
+        </mat-card-content>
+    </mat-card>
+</div>

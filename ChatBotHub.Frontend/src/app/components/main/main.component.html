@@ -1,0 +1,19 @@
+<div class="layout">    
+    <div class="chat-wrapper" *ngIf="chatBots.length > 0; else firstBot">
+        <div class="chat-files-wrapper">
+            <app-chat-files>
+            </app-chat-files>
+        </div>
+        <div class="dialog-wrapper">
+            <app-chat></app-chat>
+        </div>
+    </div>
+
+    <ng-template #firstBot>
+        <div class="first-bot-creationg-wrapper">
+            <h2>You don't have any chat bots yet. Create one now!</h2>
+            <button ></button>
+            <app-create-bot class="first-bot"></app-create-bot>
+        </div>
+    </ng-template>
+</div>

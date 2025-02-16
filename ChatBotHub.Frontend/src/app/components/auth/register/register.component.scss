@@ -1,0 +1,11 @@
+.register-form-wrapper {
+    width: auto;
+    width: 600px;
+    min-width: 200px;
+
+    form {
+        display: flex;
+        flex-direction: column;
+        padding: 16px;
+    }
+}

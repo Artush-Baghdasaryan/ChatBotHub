@@ -13,14 +13,26 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ['@nuxtjs/google-fonts', {
+  // css: ['~/assets/css/main.css'],
+
+  modules: [
+    '@nuxtjs/google-fonts',
+    // '@nuxt/ui',
+  ],
+
+  googleFonts: {
     families: {
       Roboto: true,
       Inter: [400, 700],
     },
-    display: 'swap', // Оптимизация загрузки (font-display: swap)
-    prefetch: true, // Предзагрузка шрифтов
-    preconnect: true, // Предварительное подключение к fonts.googleapis.com
-    preload: true, 
-  }],
+    display: 'swap',
+    prefetch: true,
+    preconnect: true,
+    preload: true,
+  },
+
+  // ui: {
+  //   fonts: false,
+  //   colorMode: false,
+  // }
 })

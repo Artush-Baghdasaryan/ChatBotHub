@@ -141,7 +141,7 @@ const validate = (field) => {
     max: {
       pattern: /^max:(\d+)$/,
       test: (match) => value.length > parseInt(match[1]),
-      message: (match) => `Максимум ${getWordEnding(parseInt(match[1]))} символов`,
+      message: (match) => `Максимум ${match[1]} символ${getWordEnding(parseInt(match[1]))}`,
     },
   };
 

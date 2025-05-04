@@ -26,7 +26,7 @@
             v-if="input.type === 'password'"
             class="formInput__closeEye"
             @click="() => openPassword = !openPassword">
-            <svg class="icon" width="24" height="24" viewBox="0 0 24 24">
+            <svg width="24" height="24" viewBox="0 0 24 24">
               <use :xlink:href="openPassword ? '/sprite.svg#lucide--eye' : '/sprite.svg#lucide--eye-off'"/>
             </svg>
           </div>

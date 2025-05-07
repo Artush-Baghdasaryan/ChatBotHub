@@ -59,9 +59,8 @@
         </button>
       </div>
     </aside>
-    <!-- Основной контент -->
     <main class="botContainer__main" :class="{ 'expanded': !isMenuOpen }">
-      <slot></slot>
+      <BotContent />
     </main>
   </div>
 </template>
@@ -117,7 +116,7 @@ const toggleMenu = () => {
 <style lang="scss" scoped>
 .botContainer {
   display: flex;
-  min-height: 100vh;
+  min-height: 100dvh;
   position: relative;
   transition: all 0.3s ease;
 
@@ -125,7 +124,7 @@ const toggleMenu = () => {
     width: 26rem;
     min-width: 26rem;
     padding: 1.2rem 1.2rem 1.2rem 2rem;
-    background: #2c3e50;
+    background: #1F2A4F;
     color: white;
     position: relative;
     transition: all 0.3s ease;
@@ -134,8 +133,8 @@ const toggleMenu = () => {
     flex-direction: column;
 
     &.collapsed {
-      width: 60px;
-      min-width: 60px;
+      width: 6rem;
+      min-width: 6rem;
       padding: 1.2rem;
 
       .sidebarList {
@@ -143,7 +142,7 @@ const toggleMenu = () => {
       }
 
       .sidebarHeader {
-        gap: 0.8rem;
+        gap: 1.2rem;
         flex-direction: column;
       }
     }
@@ -152,11 +151,9 @@ const toggleMenu = () => {
   &__main {
     flex: 1;
     transition: all 0.3s ease;
-    padding: 20px;
-    background: #f5f5f5;
 
     &.expanded {
-      margin-left: -190px;
+      // margin-left: -19rem;
     }
   }
 }
@@ -250,10 +247,6 @@ const toggleMenu = () => {
 
   &:active {
     transform: scale(0.95);
-  }
-
-  svg {
-    fill: currentColor;
   }
 }
 

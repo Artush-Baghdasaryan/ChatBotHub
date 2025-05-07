@@ -17,13 +17,14 @@ export default defineNuxtConfig({
 
   modules: [
     '@nuxtjs/google-fonts',
+    '@nuxt/content',
     // '@nuxt/ui',
   ],
 
   googleFonts: {
     families: {
       Roboto: true,
-      Inter: [400, 700],
+      Inter: [200, 400, 700],
     },
     display: 'swap',
     prefetch: true,

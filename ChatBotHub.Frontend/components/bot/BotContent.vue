@@ -54,10 +54,10 @@
           </div>
           <div v-if="message.author === 'bot'" class="message__bot">
             <div class="botIcon"></div>
-            <div class="content" v-html="renderMarkdown(message.content)"></div>
-            <!-- <ContentRenderer
+            <div
               class="content"
-              :value="parseMarkdown(message.content)" /> -->
+              v-html="renderMarkdown(message.content)">
+            </div>
           </div>
       </div>
       </div>

@@ -17,7 +17,6 @@ export default defineNuxtConfig({
 
   modules: [
     '@nuxtjs/google-fonts',
-    '@nuxt/content',
     // '@nuxt/ui',
   ],
 

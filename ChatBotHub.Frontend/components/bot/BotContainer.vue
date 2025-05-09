@@ -113,7 +113,7 @@ const toggleMenu = () => {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .botContainer {
   display: flex;
   min-height: 100dvh;
@@ -152,9 +152,9 @@ const toggleMenu = () => {
     flex: 1;
     transition: all 0.3s ease;
 
-    &.expanded {
-      // margin-left: -19rem;
-    }
+    // &.expanded {
+    //   // margin-left: -19rem;
+    // }
   }
 }
 

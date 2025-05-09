@@ -4,6 +4,13 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-size: 10px;
   font-family: 'Roboto', sans-serif;
+}
+
+html {
+  font-size: 62.5%; /* 1rem = 10px (10px / 16px = 0.625) */
+}
+
+body {
+  font-size: 1.6rem; /* Возвращаем базовый размер к 16px */
 }

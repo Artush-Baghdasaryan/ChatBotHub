@@ -68,7 +68,6 @@
           class="queryInput"
           placeholder="Введите ваш запрос..."
           rows="3"
-          v-model="queryText"
           @keydown.enter.exact.prevent="handleSubmit">
         </textarea>
         <div class="inputSection__buttons">
@@ -106,8 +105,11 @@ const md = new MarkdownIt({
 });
 
 const renderMarkdown = (content) => {
-  const unsafeHtml = md.render(content);
-  return DOMPurify.sanitize(unsafeHtml);
+  if (process.client) {
+    const unsafeHtml = md.render(content);
+    return DOMPurify.sanitize(unsafeHtml);
+  }
+  return md.render(content);
 };
 
 const openFileList = ref(true);
@@ -337,7 +339,9 @@ def rag_query(question):
 
 .inputSection {
   position: relative;
-  
+  max-width: 86rem;
+  margin: 0 0.8rem;
+  margin-top: 0.8rem;
   height: 10.6rem;
   border-radius: 2.4rem;
   color: #A5B8F1;
@@ -396,7 +400,7 @@ def rag_query(question):
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 3.2em;
+  height: 3.2rem;
   width: 3.2rem;
   position: absolute;
   right: 0.8rem;
@@ -470,7 +474,51 @@ def rag_query(question):
     color: #DAE1F8;
     font-size: 1.6rem;
     line-height: 1.8rem;
+
+    h1{
+      font-size: 1.6rem;
+      line-height: 1.8rem;
+    }
+
+    p {
+      font-size: 1.6rem;
+      line-height: 1.8rem;
+    }
   }
 }
 
+.message {
+  .content :deep(pre) {
+  background-color: #1e293b;
+  color: #f8fafc;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+  .content :deep(code) {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+  }
+
+  .content :deep(h1) {
+    font-size: 2em;
+    margin: 0.67em 0;
+  }
+
+  .content :deep(h2) {
+    font-size: 1.9rem;
+    margin: 0.83em 0;
+  }
+
+  .content :deep(ul) {
+    padding-left: 2em;
+    list-style-type: disc;
+  }
+
+  .content :deep(ol) {
+    padding-left: 2em;
+    list-style-type: decimal;
+  }
+}
 </style>

@@ -7,13 +7,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Accounts\" />
-      <Folder Include="Common\" />
-      <Folder Include="Files\" />
+      <ProjectReference Include="..\ChatBotHub.Domain\ChatBotHub.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ChatBotHub.Domain\ChatBotHub.Domain.csproj" />
+      <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="6.0.0-preview.4.21253.5" />
+      <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+      <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.1.2" />
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.2" />
     </ItemGroup>
 
 </Project>

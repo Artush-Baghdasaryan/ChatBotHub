@@ -45,7 +45,7 @@ public class DataRepository<TEntity> : IRepository<TEntity> where TEntity : Enti
     }
 
     private static void InitDataOnCreate(TEntity entity) {
-        if (entity.Id is null) {
+        if (entity.Id == Guid.Empty) {
             entity.GenerateId();
         }
 

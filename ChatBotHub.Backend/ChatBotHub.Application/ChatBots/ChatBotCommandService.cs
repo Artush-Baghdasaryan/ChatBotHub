@@ -44,7 +44,7 @@ public class ChatBotCommandService : IChatBotCommandService {
         var bot = await _chatBotQueryService.RequireAsync(botId);
         var attachment = await _attachmentCommandService.CreateAsync(botId, request);
         
-        bot.AddAttachment(attachment.Id!.Value);
+        bot.AddAttachment(attachment.Id);
         await _chatBotRepository.UpdateAsync(bot);
 
         return bot;

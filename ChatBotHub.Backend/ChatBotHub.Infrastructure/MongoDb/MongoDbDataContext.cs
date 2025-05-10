@@ -1,4 +1,4 @@
-﻿using ChatBotHub.Infrastructure.Options;
+﻿using ChatBotHub.Infrastructure.Common;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;

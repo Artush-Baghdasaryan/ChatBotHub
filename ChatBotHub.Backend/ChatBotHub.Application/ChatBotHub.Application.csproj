@@ -6,4 +6,14 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Accounts\" />
+      <Folder Include="Common\" />
+      <Folder Include="Files\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ChatBotHub.Domain\ChatBotHub.Domain.csproj" />
+    </ItemGroup>
+
 </Project>

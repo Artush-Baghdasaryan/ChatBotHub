@@ -31,16 +31,27 @@ public class DataRepository<TEntity> : IRepository<TEntity> where TEntity : Enti
         return await Collection.Find(filter).ToListAsync();
     }
 
-    public async Task AddAsync(TEntity entity) {
+    public async Task InsertAsync(TEntity entity) {
+        InitDataOnCreate(entity);
+        await Collection.InsertOneAsync(entity).ConfigureAwait(false);
+    }
+
+    public async Task InsertBatchAsync(List<TEntity> entities) {
+        foreach (var entity in entities) {
+            InitDataOnCreate(entity);
+        }
+
+        await Collection.InsertManyAsync(entities);
+    }
+
+    private static void InitDataOnCreate(TEntity entity) {
         if (entity.Id is null) {
             entity.GenerateId();
         }
-        
+
         if (entity is AuditableEntity auditable) {
             auditable.Audit.PerformCreated();
         }
-
-        await Collection.InsertOneAsync(entity).ConfigureAwait(false);
     }
 
     public async Task UpdateAsync(TEntity entity) {

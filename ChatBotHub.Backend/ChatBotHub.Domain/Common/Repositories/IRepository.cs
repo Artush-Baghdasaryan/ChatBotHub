@@ -9,7 +9,8 @@ public interface IRepository<TEntity> where TEntity : Entity {
     Task<List<TEntity>> GetAllAsync();
     Task<TEntity?> FindOneAsync(Expression<Func<TEntity, bool>> filter);
     Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> filter);
-    Task AddAsync(TEntity entity);
+    Task InsertAsync(TEntity entity);
+    Task InsertBatchAsync(List<TEntity> entities);
     Task UpdateAsync(TEntity entity);
     Task DeleteAsync(Guid id);
     Task<bool> ExistsAsync(Guid id);

@@ -30,7 +30,7 @@ public class ChatBotCommandService : IChatBotCommandService {
         return bot;
     }
 
-    public async Task<ChatBot> UpdateAsync(Guid id, Guid accountId, SaveChatBotRequest request) {
+    public async Task<ChatBot> UpdateAsync(Guid id, SaveChatBotRequest request) {
         var bot = await _chatBotQueryService.RequireAsync(id);
         
         bot.SetName(request.Name);
@@ -58,11 +58,6 @@ public class ChatBotCommandService : IChatBotCommandService {
         await _chatBotRepository.UpdateAsync(bot);
         
         return bot;
-    }
-
-    public async Task IndexAttachmentsAsync(Guid botId) {
-        var bot = await _chatBotQueryService.RequireAsync(botId);
-        await _attachmentCommandService.IndexAttachmentsAsync(botId, bot.AttachmentsIds);
     }
 
     public async Task DeleteAsync(Guid id) {

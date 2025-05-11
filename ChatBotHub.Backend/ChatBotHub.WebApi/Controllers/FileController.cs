@@ -18,22 +18,21 @@ public class FileController : BaseController {
         _fileCommandService = fileCommandService;
     }
     
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<FileModel?> GetById(Guid id) {
         var file = await _fileQueryService.GetByIdAsync(id);
         return FileMapper.Map(file);
     }
 
     [HttpPost]
-    public async Task<FileModel> Upload([FromForm] IFormFile formFile) {
+    public async Task<FileModel> Upload(IFormFile formFile) {
         var file = await _fileCommandService.CreateAsync(formFile);
         return FileMapper.Map(file);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     public Task Delete(Guid id) {
         return _fileCommandService.DeleteAsync(id);
     }
-    
 }
 

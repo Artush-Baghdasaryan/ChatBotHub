@@ -1,4 +1,5 @@
-﻿using ChatBotHub.Application.Attachments;
+﻿using ChatBotHub.Application.AiKnowledge;
+using ChatBotHub.Application.Attachments;
 using ChatBotHub.Application.Attachments.Requests;
 using ChatBotHub.Application.ChatBots.Exceptions;
 using ChatBotHub.Application.ChatBots.Mappers;
@@ -11,15 +12,18 @@ public class ChatBotCommandService : IChatBotCommandService {
     private readonly IChatBotRepository _chatBotRepository;
     private readonly IChatBotQueryService _chatBotQueryService;
     private readonly IAttachmentCommandService _attachmentCommandService;
+    private readonly IKnowledgeService _knowledgeService;
 
     public ChatBotCommandService(
         IChatBotRepository chatBotRepository,
         IChatBotQueryService chatBotQueryService,
-        IAttachmentCommandService attachmentCommandService
+        IAttachmentCommandService attachmentCommandService,
+        IKnowledgeService knowledgeService
     ) {
         _chatBotRepository = chatBotRepository;
         _chatBotQueryService = chatBotQueryService;
         _attachmentCommandService = attachmentCommandService;
+        _knowledgeService = knowledgeService;
     }
 
     public async Task<ChatBot> CreateAsync(Guid accountId, SaveChatBotRequest request) {
@@ -52,7 +56,10 @@ public class ChatBotCommandService : IChatBotCommandService {
 
     public async Task<ChatBot> RemoveAttachmentAsync(Guid botId, Guid attachmentId) {
         var bot = await _chatBotQueryService.RequireAsync(botId);
+        // for better performance and clean code those method calls should be separated from this method
+        // and handled using Event Driven Architecture
         await _attachmentCommandService.DeleteAsync(attachmentId);
+        await _knowledgeService.RemoveKnowledgeAsync(botId, attachmentId);
 
         bot.RemoveAttachment(attachmentId);
         await _chatBotRepository.UpdateAsync(bot);

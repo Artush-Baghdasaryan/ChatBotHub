@@ -4,3 +4,5 @@ chromadb==0.5.23
 fastapi==0.115.6
 pydantic==2.10.4
 starlette==0.41.3
+
+llama-index-core~=0.12.8

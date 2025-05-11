@@ -18,7 +18,7 @@ public class AttachmentController : BaseController {
         _attachmentCommandService = attachmentCommandService;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<AttachmentModel?> GetById(Guid id) {
         var attachment = await _attachmentQueryService.GetByIdAsync(id);
         return AttachmentMapper.Map(attachment);

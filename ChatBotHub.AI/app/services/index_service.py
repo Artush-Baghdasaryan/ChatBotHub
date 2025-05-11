@@ -1,8 +1,10 @@
 from typing import Annotated, List
 from fastapi import Depends
 from llama_index.core import StorageContext, VectorStoreIndex, Document
+from sympy.matrices.expressions.matadd import factor_of
 
-from app.models.attachment import Attachment
+from app.factories.document_facotry_provider import DocumentFactoryProvider
+from app.models.index_request import IndexRequest
 from app.services.chroma_service import ChromaService
 
 class IndexService:
@@ -12,53 +14,100 @@ class IndexService:
     ) -> None:
         self.__chroma_service = chroma_service
 
+
     def index(
         self,
-        chat_id: str,
-        attachments: List[Attachment]
+        bot_id: str,
+        requests: List[IndexRequest]
     ) -> VectorStoreIndex:
-        """
-        Creates an index for a received file. If an index already exists for the given chat_id,
-        it will be dropped and recreated.
-
+        """Creates or updates a vector index for the given bot_id using the provided requests.
+        
         Args:
-        - chat_id: Unique identifier for the chat session
-        - attachment: Attachment object containing the file data and metadata
-
+            bot_id: Bot identifier
+            requests: List of index requests to process
+            
         Returns:
-        A VectorStoreIndex object representing the created index for the document
+            VectorStoreIndex: The created or updated index
         """
-        documents = [
-            Document(
-                text=attachment.file.file_data,
-                metadata={
-                    "chat_id": chat_id,
-                    "file_name": attachment.file.file_name,
-                    "description": attachment.description
-                }
-            )
-            for attachment in attachments
-        ]
+        
+        documents = self.__get_documents(requests)
+        print("documents are created", documents)
 
-        self.__chroma_service.drop_collection_if_exists(chat_id)
+        if self.__chroma_service.collection_exists(bot_id):
+            return self.__update_index(bot_id, documents)
 
-        vector_store = self.__chroma_service.get_or_create_vector_store(chat_id)
-        print("vector store created", vector_store)
-        storage_context = StorageContext.from_defaults(
-            vector_store=vector_store
+        return self.__index(bot_id, documents)
+
+
+    @staticmethod
+    def __get_documents(requests: List[IndexRequest]) -> List[Document]:
+        """Converts index requests into LlamaIndex documents using appropriate factories.
+        
+        Args:
+            requests: List of index requests to convert
+            
+        Returns:
+            List[Document]: Generated documents
+        """
+        documents = []
+        for request in requests:
+            factory = DocumentFactoryProvider.get_factory(request)
+            documents_for_req = factory.create_documents()
+            documents.append(documents_for_req)
+
+        return documents
+
+
+    def __index(self, collection_name: str, documents: List[Document]):
+        """Creates a new vector index for the given collection.
+        
+        Args:
+            collection_name: Name of the collection
+            documents: Documents to index
+            
+        Returns:
+            VectorStoreIndex: The created index
+        """
+        self.__chroma_service.drop_collection_if_exists(collection_name)
+
+        vector_store = self.__chroma_service.get_or_create_vector_store(collection_name)
+        storage_context = StorageContext.from_defaults(vector_store=vector_store)
+
+        return VectorStoreIndex.from_documents(documents, storage_context=storage_context)
+
+
+    def __update_index(self, collection_name: str, documents: List[Document]):
+        """Updates an existing vector index with new documents.
+        
+        Args:
+            collection_name: Name of the collection
+            documents: New documents to add
+            
+        Returns:
+            VectorStoreIndex: The updated index
+        """
+        vector_store = self.__chroma_service.get_or_create_vector_store(collection_name)
+
+        storage_context = StorageContext.from_defaults(vector_store=vector_store)
+        index = VectorStoreIndex.from_vector_store(
+            vector_store=vector_store,
+            storage_context=storage_context
         )
-        print("storage context created", storage_context)
-        return VectorStoreIndex.from_documents(documents, storage_context)
+
+        for document in documents:
+            index.insert(document)
+
+        return index
+
 
     def get_index(self, chat_id: str) -> VectorStoreIndex:
-        """
-        Retrieves an existing index for querying purposes.
-
+        """Retrieves an existing vector index for querying.
+        
         Args:
-        - chat_id: Unique identifier for the chat session
-
+            chat_id: Chat session identifier
+            
         Returns:
-        A VectorStoreIndex object for the specified chat_id
+            VectorStoreIndex: The retrieved index
         """
         vector_store = self.__chroma_service.get_or_create_vector_store(chat_id)
 

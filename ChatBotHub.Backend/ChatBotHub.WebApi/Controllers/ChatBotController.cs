@@ -25,7 +25,7 @@ public class ChatBotController : BaseController {
         _attachmentQueryService = attachmentQueryService;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<ExtendedChatBotModel?> GetById(Guid id) {
         var bot = await _chatBotQueryService.GetByIdAsync(id);
         var attachments = await _attachmentQueryService.GetByIdsAsync(bot?.AttachmentsIds ?? []);
@@ -33,7 +33,7 @@ public class ChatBotController : BaseController {
         return ExtendedChatBotMapper.Map(bot, attachments);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     public async Task<ChatBotModel?> Update(Guid id, [FromBody] SaveChatBotRequestModel requestModel) {
         var request = SaveChatBotRequestMapper.Map(requestModel);
         var bot = await _chatBotCommandService.UpdateAsync(id, request);
@@ -49,18 +49,18 @@ public class ChatBotController : BaseController {
         return ChatBotMapper.Map(bot);
     }
 
-    [HttpPost("{id}/attachments")]
+    [HttpPost("{id:guid}/attachments")]
     public Task AddAttachment(Guid id, [FromBody] SaveAttachmentRequestModel requestModel) {
         var request = SaveAttachmentRequestMapper.Map(requestModel);
         return _chatBotCommandService.AddAttachmentAsync(id, request);
     }
 
-    [HttpDelete("{id}/attachments")]
+    [HttpDelete("{id:guid}/attachments")]
     public Task RemoveAttachment(Guid id, [FromQuery] Guid attachmentId) {
         return _chatBotCommandService.RemoveAttachmentAsync(id, attachmentId);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     public Task DeleteAsync(Guid id) {
         return _chatBotCommandService.DeleteAsync(id);
     }

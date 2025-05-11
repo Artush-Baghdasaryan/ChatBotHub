@@ -16,5 +16,13 @@ class ChromaService:
         except Exception as e:
             print(f"Error dropping collection {collection_name}: {e}")
 
+    def collection_exists(self, collection_name: str) -> bool:
+        try:
+            self.__db.get_collection(collection_name)
+            return True
+        except Exception as e:
+            print(f"Error checking collection {collection_name}: {e}")
+            return False
+
     def _get_or_create_collection(self, name: str) -> chromadb.Collection:
         return self.__db.get_or_create_collection(name)

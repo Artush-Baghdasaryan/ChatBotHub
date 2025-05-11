@@ -1,11 +1,14 @@
 <template>
   <div class="botContainer">
-    <BotSidebar />
+    <BotSidebar v-show="!width.isTablet" />
     <BotContent />
   </div>
 </template>
 
 <script setup>
+import useWindowSize from '@/composables/useWindowSize'
+
+const { width } = useWindowSize()
 </script>
 
 <style lang="scss">

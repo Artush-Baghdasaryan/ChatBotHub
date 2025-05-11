@@ -1,13 +1,14 @@
 <template>
-  <button class="button" :class="type">
+  <button class="button" :class="buttonType">
     <svg
+      v-if="iconSize[buttonType]"
       class="button__icon"
-      :width="iconSize[type]"
-      :height="iconSize[type]">
+      :width="iconSize[buttonType]"
+      :height="iconSize[buttonType]">
       <use :xlink:href="`/sprite.svg#${icon}`"/>
     </svg>
     <div
-      v-show="!['icon', 'icon-round'].includes(type)"
+      v-show="!['icon', 'icon-round'].includes(buttonType)"
       class="button__title">
       {{ title }}
     </div>
@@ -22,7 +23,7 @@ const props = defineProps({
   icon: {
     type: String,
   },
-  type: {
+  buttonType: {
     type: String,
     validator: (value) => ['icon', 'icon-round', 'icon-full', 'icon-full-center', 'icon-info', 'outlined', 'link', 'fulled'].includes(value),
   },
@@ -32,15 +33,15 @@ const iconSize = {
   'icon': 24, //
   'icon-round': 20, //
   'icon-full': 36, //
-  'icon-info': 16,
+  'icon-info': 24,
   'icon-full-center': 24,
   'outlined': 16, //
-  'link': 20,
-  'fulled': 24, 
+  // 'link': 20,
+  // 'fulled': 24, 
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .button {
   border: none;
   display: flex;
@@ -132,6 +133,49 @@ const iconSize = {
     font-size: 1.2rem;
     color: #A5B8F1;
     border: 0.1rem solid #A5B8F1;
+  }
+
+  &.fulled {
+    background-color: #b7c6ef;
+    border-radius: 20px;
+    border: none;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 40px;
+    color: #404E7B;
+    font-size: 1.6rem;
+    text-transform: none;
+
+    &:hover {
+      background-color: #97ade8;
+    }
+
+    &:active {
+      transition: all 0.1s ease-in-out;
+    }
+
+    &:disabled, &:hover:disabled {
+      opacity: 0.5;
+      box-shadow: none;
+      cursor: default;
+    }
+  }
+
+  &.link {
+    color: #b7c6ef;
+    background-color: #2f395b00;
+    border: none;
+    display: flex;
+    justify-content: center;
+    font-size: 1.6rem;
+    font-weight: 200;
+    line-height: 1.8rem;
+    text-transform: none;
+    
+    &:hover {
+      color: #ccd6f2;
+    }
   }
 }
 </style>

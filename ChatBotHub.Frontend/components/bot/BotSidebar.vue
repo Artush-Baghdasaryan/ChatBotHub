@@ -4,13 +4,13 @@
     :class="{ 'collapsed': !isMenuOpen }">
     <div class="sidebarHeader">
       <BotButton
-        type="icon"
+        buttonType="icon"
         icon="material-symbols--menu-rounded"
         @click="toggleMenu" />
       <BotButton
-        type="icon"
+        buttonType="icon"
         icon="material-symbols--edit-rounded"
-        @click="() => true" />
+        @click="openModal" />
     </div>
     <nav class="sidebarList">
       <div
@@ -28,7 +28,7 @@
           </div>
         </div>
         <!-- <BotButton
-          type="icon-info"
+          buttonType="icon-info"
           icon="charm--menu-meatball"
           class="sidebarBot__menu" 
           @click="() => 1"/> -->
@@ -36,20 +36,34 @@
     </nav>
     <div class="sidebarFooter">
       <BotButton
-        :type="!isMenuOpen ? 'icon' : 'icon-full'"
+        :buttonType="!isMenuOpen ? 'icon' : 'icon-full'"
         title="Настройки"
         icon="material-symbols--settings"
-        @click="() => true" />
+        @click="openModal" />
       <BotButton
-        :type="!isMenuOpen ? 'icon' : 'icon-full'"
+        :buttonType="!isMenuOpen ? 'icon' : 'icon-full'"
         title="Частые вопросы"
         icon="fe--question"
-        @click="() => true" />
+        @click="openModal" />
     </div>
+    <BotDialog
+      :isOpen="isModalOpen" 
+      title="Пример диалога"
+      @close="closeModal" />
   </aside>
 </template>
 
 <script setup>
+
+const isModalOpen = ref(false);
+
+const openModal = () => {
+  isModalOpen.value = true;
+};
+
+const closeModal = () => {
+  isModalOpen.value = false;
+};
 
 const isMenuOpen = ref(true);
 const botList = [

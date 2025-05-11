@@ -6,7 +6,8 @@
       <div
         v-for="(file, index) in fileList"
         :key="index"
-        class="file">
+        class="file"
+        @click="openModal">
         <div class="file__icon">
           <svg width="32" height="32" viewBox="0 0 32 32">
             <use xlink:href="/sprite.svg#mdi--file"/>
@@ -16,17 +17,21 @@
         <BotButton
           style="display: none;"
           class="editIcon"
-          type="icon-info"
+          buttonType="icon-info"
           icon="material-symbols--edit-rounded" />
       </div>
     </div>
     <BotButton
-      type="icon-full-center"
+      buttonType="icon-full-center"
       title="Добавить"
       icon="ic--round-plus"
       class="fileButton"
-      @click="() => true" />
+      @click="openModal" />
   </div>
+  <BotDialog
+    :isOpen="isModalOpen" 
+    title="Пример диалога"
+    @close="closeModal" />
 </template>
 <script setup>
 const props = defineProps({
@@ -35,6 +40,16 @@ const props = defineProps({
     default: true,
   },
 });
+
+const isModalOpen = ref(false);
+
+const openModal = () => {
+  isModalOpen.value = true;
+};
+
+const closeModal = () => {
+  isModalOpen.value = false;
+};
 
 const fileList = [
   {
@@ -51,11 +66,11 @@ const fileList = [
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding-right: 2rem;
   max-width: 26rem;
   width: 33%;
   opacity: 1;
   transition: all 0.3s ease;
+  padding: 0 0.8rem;
 
   &.closed {
     padding-right: 0;

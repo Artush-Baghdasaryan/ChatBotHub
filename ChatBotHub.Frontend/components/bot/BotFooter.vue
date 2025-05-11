@@ -5,20 +5,19 @@
 				class="queryInput"
 				placeholder="Введите ваш запрос..."
 				rows="3"
-				@keydown.enter.exact.prevent="handleSubmit">
-			</textarea>
+				@keydown.enter.exact.prevent="handleSubmit"></textarea>
 			<div class="inputSection__buttons">
 				<BotButton
-					type="outlined"
+					buttonType="outlined"
 					title="Удалить чат"
 					icon="material-symbols--delete-outline-rounded" />
 				<BotButton
-					type="outlined"
+					buttonType="outlined"
 					title="Придумать"
 					icon="bi--stars" />
 			</div>
 			<BotButton
-				type="icon-round"
+				buttonType="icon-round"
 				icon="teenyicons--send-outline"
 				class="submitButton"
 				@click="handleSubmit" />

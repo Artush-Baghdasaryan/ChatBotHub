@@ -1,6 +1,13 @@
 <template>
   <header class="botHeader">
-    <div class="logo">RAG AI Bot</div>
+    <div class="left">
+      <BotButton
+        v-if="width.isTablet"
+        buttonType="icon"
+        icon="material-symbols--menu-rounded"
+        @click="openDrawer" />
+      <div class="logo">RAG AI Bot</div>
+    </div>
     <div class="user">
       <div class="user__name">{{ user }}</div>
       <div class="user__icon">
@@ -10,14 +17,33 @@
       </div>
     </div>
   </header>
+  <BotDrawer 
+    :isOpen="isDrawerOpen" 
+    title="Меню"
+    width="300px"
+    @close="closeDrawer" />
 </template>
 <script setup>
+import useWindowSize from '@/composables/useWindowSize'
+
+const { width } = useWindowSize()
+
 const props = defineProps({
   user: {
     type: String,
     default: 'user',
   },
 });
+
+const isDrawerOpen = ref(false);
+
+const openDrawer = () => {
+  isDrawerOpen.value = true;
+};
+
+const closeDrawer = () => {
+  isDrawerOpen.value = false;
+};
 </script>
 <style lang="scss" scoped>
 .botHeader {
@@ -25,8 +51,18 @@ const props = defineProps({
   justify-content: space-between;
   align-items: center;
   min-height: 6rem;
-  padding-inline: 2rem;
+  padding: 0 2rem;
   border-bottom: 2px solid #404E7B;
+
+  @include tablet {
+    padding: 0 0.8rem;
+  }
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
 }
 
 .logo {

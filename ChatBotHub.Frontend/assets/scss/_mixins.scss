@@ -1,0 +1,37 @@
+// Breakpoint variables
+$phone: 576px;     // <= 576px (phones)
+$tablet: 768px;    // <= 768px (tablets)
+$laptop: 992px;    // <= 992px (small laptops)
+$desktop: 1200px;  // <= 1200px (standard desktops)
+
+// Миксины для медиазапросов (max-width)
+@mixin phone {
+  @media (max-width: $phone) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: $tablet) {
+    @content;
+  }
+}
+
+@mixin laptop {
+  @media (max-width: $laptop) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (max-width: $desktop) {
+    @content;
+  }
+}
+
+// Кастомный миксин для любых размеров
+@mixin screen($max-width) {
+  @media (max-width: $max-width) {
+    @content;
+  }
+}

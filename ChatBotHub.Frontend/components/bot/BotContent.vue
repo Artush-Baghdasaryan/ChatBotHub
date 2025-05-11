@@ -10,9 +10,17 @@
   </div>
 </template>
 <script setup>
+import useWindowSize from '@/composables/useWindowSize'
+
+const { width } = useWindowSize()
+
 const openFileList = ref(true);
 
 const updateFileList = () => openFileList.value = !openFileList.value;
+
+watch(width, () => {
+  if (width.value.isTablet) openFileList.value = false;
+});
 
 </script>
 <style lang="scss" scoped>
@@ -33,6 +41,5 @@ const updateFileList = () => openFileList.value = !openFileList.value;
   width: 100%;
   max-width: 83.6rem;
   display: flex;
-  padding: 0 0.8rem;
 }
 </style>

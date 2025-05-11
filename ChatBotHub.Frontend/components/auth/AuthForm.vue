@@ -31,25 +31,23 @@
             </svg>
           </div>
         </div>
-        <button
+        <BotButton
+          buttonType="fulled"
+          :title="data_authForm[mode].button"
           class="formInput__button"
-          type="submit"
-          :disabled="isSubmitting">
-          {{ data_authForm[mode].button }}
-        </button>
-        <button
+          type="submit" />
+        <BotButton
+          buttonType="link"
+          :title="data_authForm[mode].addition.text"
           class="formInput__addition"
           type="button"
-          @click="() => mode = data_authForm[mode].addition.mode">
-          {{ data_authForm[mode].addition.text }}
-        </button>
+          @click="() => mode = data_authForm[mode].addition.mode" />
       </form>
     </div>
   </div>
 </template>
 <script setup>
 const formData = reactive({});
-const isSubmitting = ref(false);
 
 const mode = ref('login');
 const openPassword = ref(false);
@@ -98,6 +96,21 @@ const data_authForm = {
     },
   },
 };
+
+// const data_authFormButtons = [
+//   {
+//     buttonType: 'fulled',
+//     title: data_authForm[mode].button,
+//     class: 'formInput__button',
+//     type: 'submit',
+//   },
+//   {
+//     buttonType: 'link',
+//     title: data_authForm[mode].button,
+//     class: 'formInput__addition',
+//     type: 'submit',
+//   },
+// ]
 
 data_authForm[mode.value].inputs.forEach(input => {
   formData[input.type] = '';
@@ -279,55 +292,10 @@ const handleSubmit = () => {
 
   &__button {
     margin-top: 1.6rem;
-    background-color: #b7c6ef;
-    border-radius: 20px;
-    border: none;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 40px;
-    color: #404E7B;
-    font-size: 1.6rem;
-    text-transform: none;
-    cursor: pointer;
-    transition: all 0.1s ease-in-out;
-
-    &:hover {
-      background-color: #97ade8;
-    }
-
-    &:active {
-      transition: all 0.1s ease-in-out;
-    }
-
-    &:disabled, &:hover:disabled {
-      opacity: 0.5;
-      box-shadow: none;
-      cursor: default;
-    }
   }
 
   &__addition {
     margin: 0.8rem auto 0;
-    color: #b7c6ef;
-    background-color: #2f395b00;
-    border: none;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.6rem;
-    font-weight: 200;
-    line-height: 1.8rem;
-    text-transform: none;
-    cursor: pointer;
-    transition: all 0.1s ease-in-out;
-    
-    &:hover {
-      color: #ccd6f2;
-    }
   }
 }
 </style>

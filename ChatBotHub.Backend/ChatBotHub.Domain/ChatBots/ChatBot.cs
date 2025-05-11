@@ -21,7 +21,7 @@ public class ChatBot : AuditableEntity {
             return;
         }
 
-        var spec = new ChatBotNameSpecification(name).IsSatisfiedBy(this);
+        var spec = new ChatBotNameLengthValidity(name).IsSatisfiedBy(this);
         if (!spec.Value) {
             throw new InvalidChatBotNameException(spec.Message);
         }
@@ -34,7 +34,7 @@ public class ChatBot : AuditableEntity {
             return;
         }
 
-        var spec = new ChatBotDescriptionSpecification(description).IsSatisfiedBy(this);
+        var spec = new ChatBotDescriptionLengthValidity(description).IsSatisfiedBy(this);
         if (!spec.Value) {
             throw new InvalidChatBotDescriptionException(spec.Message);
         }
@@ -43,7 +43,7 @@ public class ChatBot : AuditableEntity {
     }
 
     public void AddAttachment(Guid id) {
-        var spec = new ChatBotAddAttachmentSpecification(id).IsSatisfiedBy(this);
+        var spec = new ChatBotAddAttachmentExistingValidity(id).IsSatisfiedBy(this);
         if (!spec.Value) {
             throw new InvalidAttachmentException(spec.Message);
         }
@@ -52,7 +52,7 @@ public class ChatBot : AuditableEntity {
     }
 
     public void RemoveAttachment(Guid id) {
-        var spec = new ChatBotRemoveAttachmentSpecification(id).IsSatisfiedBy(this);
+        var spec = new ChatBotRemoveAttachmentExistingValidity(id).IsSatisfiedBy(this);
         if (!spec.Value) {
             throw new InvalidAttachmentException(spec.Message);
         }

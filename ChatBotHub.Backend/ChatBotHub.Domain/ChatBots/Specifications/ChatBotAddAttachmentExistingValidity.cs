@@ -2,10 +2,10 @@
 
 namespace ChatBotHub.Domain.ChatBots.Specifications;
 
-public class ChatBotAddAttachmentSpecification : ISpecification<ChatBot> {
+public class ChatBotAddAttachmentExistingValidity : ISpecification<ChatBot> {
     private readonly Guid _attachmentId;
 
-    public ChatBotAddAttachmentSpecification(Guid attachmentId) {
+    public ChatBotAddAttachmentExistingValidity(Guid attachmentId) {
         _attachmentId = attachmentId;
     }
 

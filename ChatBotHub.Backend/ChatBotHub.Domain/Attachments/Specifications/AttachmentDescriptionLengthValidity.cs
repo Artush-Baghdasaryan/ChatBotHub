@@ -2,12 +2,12 @@
 
 namespace ChatBotHub.Domain.Attachments.Specifications;
 
-public class AttachmentDescriptionSpecification : ISpecification<Attachment> {
+public class AttachmentDescriptionLengthValidity : ISpecification<Attachment> {
     private const int MaxLength = 1000;
 
     private readonly string _description;
 
-    public AttachmentDescriptionSpecification(string description) {
+    public AttachmentDescriptionLengthValidity(string description) {
         _description = description;
     }
 

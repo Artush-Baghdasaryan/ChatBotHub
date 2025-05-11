@@ -42,7 +42,7 @@ public class ChatBotCommandService : IChatBotCommandService {
 
     public async Task<ChatBot> AddAttachmentAsync(Guid botId, SaveAttachmentRequest request) {
         var bot = await _chatBotQueryService.RequireAsync(botId);
-        var attachment = await _attachmentCommandService.CreateAsync(botId, request);
+        var attachment = await _attachmentCommandService.CreateAsync(request);
         
         bot.AddAttachment(attachment.Id);
         await _chatBotRepository.UpdateAsync(bot);
@@ -58,6 +58,11 @@ public class ChatBotCommandService : IChatBotCommandService {
         await _chatBotRepository.UpdateAsync(bot);
         
         return bot;
+    }
+
+    public async Task IndexAttachmentsAsync(Guid botId) {
+        var bot = await _chatBotQueryService.RequireAsync(botId);
+        await _attachmentCommandService.IndexAttachmentsAsync(botId, bot.AttachmentsIds);
     }
 
     public async Task DeleteAsync(Guid id) {

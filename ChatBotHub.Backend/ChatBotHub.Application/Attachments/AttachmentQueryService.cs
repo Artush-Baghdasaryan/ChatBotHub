@@ -19,6 +19,10 @@ public class AttachmentQueryService : IAttachmentQueryService {
             throw new AttachmentIsNotFoundException(id);
     }
 
+    public Task<List<Attachment>> GetByIdsAsync(List<Guid> ids) {
+        return _repository.GetByIdsAsync(ids);
+    }
+
     public Task<List<Attachment>> GetAllAsync() {
         return _repository.GetAllAsync();
     }

@@ -46,21 +46,21 @@ public class Account : AuditableEntity {
     }
 
     public static void ValidateName(string name) {
-        var firstNameSpec = AccountNameSpecification.IsSatisfiedBy(name);
+        var firstNameSpec = AccountNameFormatValidity.IsSatisfiedBy(name);
         if (!firstNameSpec.Value) {
             throw new InvalidAccountNameException(firstNameSpec.Message);
         }
     }
 
     public static void ValidateLastName(string lastName) {
-        var lastNameSpec = AccountNameSpecification.IsSatisfiedBy(lastName);
+        var lastNameSpec = AccountNameFormatValidity.IsSatisfiedBy(lastName);
         if (!lastNameSpec.Value) {
             throw new InvalidAccountNameException(lastNameSpec.Message);
         }
     }
 
     public static void ValidateEmail(string email) {
-        var emailSpec = AccountEmailSpecification.IsSatisfiedBy(email);
+        var emailSpec = AccountEmailFormatValidity.IsSatisfiedBy(email);
         if (!emailSpec.Value) {
             throw new InvalidAccountEmailException(emailSpec.Message);
         }

@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace ChatBotHub.Domain.Accounts.Specifications;
 
-public class AccountNameSpecification {
+public class AccountNameFormatValidity {
     private const int MaxLength = 50;
     private static readonly Regex NameRegex = new(@"^[a-zA-Z\-]+$", RegexOptions.Compiled);
     

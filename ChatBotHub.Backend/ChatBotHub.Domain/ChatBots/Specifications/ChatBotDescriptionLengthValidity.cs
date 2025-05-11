@@ -2,12 +2,12 @@
 
 namespace ChatBotHub.Domain.ChatBots.Specifications;
 
-public class ChatBotDescriptionSpecification : ISpecification<ChatBot> {
+public class ChatBotDescriptionLengthValidity : ISpecification<ChatBot> {
     private const int MaxLength = 1000;
 
     private readonly string _description;
 
-    public ChatBotDescriptionSpecification(string description) {
+    public ChatBotDescriptionLengthValidity(string description) {
         _description = description;
     }
     

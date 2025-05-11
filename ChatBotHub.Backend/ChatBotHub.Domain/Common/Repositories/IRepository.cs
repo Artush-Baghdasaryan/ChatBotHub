@@ -6,6 +6,7 @@ namespace ChatBotHub.Domain.Common.Repositories;
 
 public interface IRepository<TEntity> where TEntity : Entity {
     Task<TEntity?> GetByIdAsync(Guid id);
+    Task<List<TEntity>> GetByIdsAsync(List<Guid> ids);
     Task<List<TEntity>> GetAllAsync();
     Task<TEntity?> FindOneAsync(Expression<Func<TEntity, bool>> filter);
     Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> filter);

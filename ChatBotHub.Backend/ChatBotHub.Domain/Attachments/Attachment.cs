@@ -13,10 +13,12 @@ public class Attachment : AuditableEntity {
     }
 
     public Guid FileId { get; private set; }
-    public string? Description { get; private set; }
+    public string Description { get; private set; } = string.Empty;
+    public bool Indexed { get; private set; }
 
     public void SetFileId(Guid id) {
         FileId = id;
+        MakeDirty();
     }
 
     public void SetDescription(string description) {
@@ -24,11 +26,16 @@ public class Attachment : AuditableEntity {
             return;
         }
 
-        var spec = new AttachmentDescriptionSpecification(description).IsSatisfiedBy(this);
+        var spec = new AttachmentDescriptionLengthValidity(description).IsSatisfiedBy(this);
         if (!spec.Value) {
             throw new InvalidAttachmentDescriptionException(spec.Message);
         }
 
+        MakeDirty();
         Description = description;
+    }
+
+    private void MakeDirty() {
+        Indexed = false;
     }
 }

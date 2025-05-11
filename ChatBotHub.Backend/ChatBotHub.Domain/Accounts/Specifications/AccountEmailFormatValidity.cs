@@ -5,7 +5,7 @@ using ChatBotHub.Domain.Common.Specifications;
 
 namespace ChatBotHub.Domain.Accounts.Specifications;
 
-public static class AccountEmailSpecification {
+public static class AccountEmailFormatValidity {
     private const int MaxLength = 254;
     private static readonly Regex EmailRegex = new(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", RegexOptions.Compiled);
 

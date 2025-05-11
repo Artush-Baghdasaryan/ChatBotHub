@@ -19,6 +19,10 @@ public class DataRepository<TEntity> : IRepository<TEntity> where TEntity : Enti
         return await Collection.Find(e => e.Id == id).FirstOrDefaultAsync();
     }
 
+    public async Task<List<TEntity>> GetByIdsAsync(List<Guid> ids) {
+        return await Collection.Find(e => ids.Contains(e.Id)).ToListAsync();
+    }
+
     public async Task<List<TEntity>> GetAllAsync() {
         return await Collection.Find(FilterDefinition<TEntity>.Empty).ToListAsync();
     }

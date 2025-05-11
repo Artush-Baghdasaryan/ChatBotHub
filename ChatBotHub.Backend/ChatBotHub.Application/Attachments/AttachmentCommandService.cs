@@ -16,14 +16,14 @@ public class AttachmentCommandService : IAttachmentCommandService {
         _queryService = queryService;
     }
 
-    public async Task<Attachment> CreateAsync(Guid botId, SaveAttachmentRequest request) {
+    public async Task<Attachment> CreateAsync(SaveAttachmentRequest request) {
         var attachment = new Attachment(request.FileId, request.Description);
         await _repository.InsertAsync(attachment);
 
         return attachment;
     }
 
-    public async Task<Attachment> UpdateAsync(Guid id, Guid botId, SaveAttachmentRequest request) {
+    public async Task<Attachment> UpdateAsync(Guid id, SaveAttachmentRequest request) {
         var attachment = await _queryService.RequireAsync(id);
         
         attachment.SetFileId(request.FileId);

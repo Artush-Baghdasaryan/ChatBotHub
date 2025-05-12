@@ -10,7 +10,7 @@ public class DataRepository<TEntity> : IRepository<TEntity> where TEntity : Enti
     protected readonly MongoDbDataContext DataContext;
     protected readonly IMongoCollection<TEntity> Collection;
 
-    public DataRepository(MongoDbDataContext context, string collectionName) {
+    protected DataRepository(MongoDbDataContext context, string collectionName) {
         DataContext = context;
         Collection = context.GetCollection<TEntity>(collectionName);
     }
@@ -59,11 +59,29 @@ public class DataRepository<TEntity> : IRepository<TEntity> where TEntity : Enti
     }
 
     public async Task UpdateAsync(TEntity entity) {
-        if (entity is AuditableEntity auditable) {
-            auditable.Audit.PerformModified();
+        InitDataOnUpdate(entity);
+        await Collection.ReplaceOneAsync(e => e.Id == entity.Id, entity).ConfigureAwait(false);
+    }
+
+    public async Task UpdateBatchAsync(List<TEntity> entities) {
+        var updates = new List<WriteModel<TEntity>>();
+
+        foreach (var entity in entities) {
+            InitDataOnUpdate(entity);
+            
+            var filter = Builders<TEntity>.Filter.Where(x => x.Id == entity.Id);
+            updates.Add(new ReplaceOneModel<TEntity>(filter, entity));
         }
 
-        await Collection.ReplaceOneAsync(e => e.Id == entity.Id, entity).ConfigureAwait(false);
+        if (updates.Any()) {
+            await Collection.BulkWriteAsync(updates);
+        }
+    }
+
+    private void InitDataOnUpdate(TEntity entity) {
+        if (entity is AuditableEntity auditableEntity) {
+            auditableEntity.Audit.PerformModified();
+        }
     }
 
     public async Task DeleteAsync(Guid id) {

@@ -10,6 +10,8 @@ api_key_header = APIKeyHeader(name="API_KEY")
 def verify_api_key(
         api_key: Annotated[str, Depends(api_key_header)]
 ) -> str:
+    print("check_api_key", api_key)
+    print("waiting", API_KEY)
     if api_key != API_KEY:
         raise HTTPException(status_code=401, detail="Invalid API key")
     return api_key

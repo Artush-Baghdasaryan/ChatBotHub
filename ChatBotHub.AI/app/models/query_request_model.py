@@ -12,6 +12,7 @@ class Message(BaseModel):
     role: MessageRoleType
     content: str
 
+
 class QueryRequestModel(BaseModel):
     query: str
     context: List[Message]

@@ -33,6 +33,14 @@ public class AttachmentCommandService : IAttachmentCommandService {
         return attachment;
     }
 
+    public Task MakeAttachmentsIndexed(List<Attachment> attachments) {
+        foreach (var attachment in attachments) {
+            attachment.MarkIndexed();
+        }
+
+        return _repository.UpdateBatchAsync(attachments);
+    }
+
     public async Task DeleteAsync(Guid id) {
         if (!await _repository.ExistsAsync(id)) {
             throw new AttachmentIsNotFoundException(id);

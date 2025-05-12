@@ -3,9 +3,9 @@ from fastapi import Depends
 from llama_index.core import StorageContext, VectorStoreIndex, Document
 from sympy.matrices.expressions.matadd import factor_of
 
-from app.factories.document_facotry_provider import DocumentFactoryProvider
-from app.models.index_request import IndexRequest
-from app.services.chroma_service import ChromaService
+from app.document_parsers.document_parser_provider import DocumentParserProvider
+from app.models import IndexRequest
+from app.services import ChromaService
 
 class IndexService:
     def __init__(
@@ -51,9 +51,9 @@ class IndexService:
         """
         documents = []
         for request in requests:
-            factory = DocumentFactoryProvider.get_factory(request)
+            factory = DocumentParserProvider.get_parser(request)
             documents_for_req = factory.create_documents()
-            documents.append(documents_for_req)
+            documents.extend(documents_for_req)
 
         return documents
 

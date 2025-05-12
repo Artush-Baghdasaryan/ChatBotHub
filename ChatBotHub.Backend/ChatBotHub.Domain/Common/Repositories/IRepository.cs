@@ -13,6 +13,7 @@ public interface IRepository<TEntity> where TEntity : Entity {
     Task InsertAsync(TEntity entity);
     Task InsertBatchAsync(List<TEntity> entities);
     Task UpdateAsync(TEntity entity);
+    Task UpdateBatchAsync(List<TEntity> entities);
     Task DeleteAsync(Guid id);
     Task<bool> ExistsAsync(Guid id);
 }

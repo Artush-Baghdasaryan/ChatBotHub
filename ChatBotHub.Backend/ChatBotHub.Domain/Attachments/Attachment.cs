@@ -35,6 +35,10 @@ public class Attachment : AuditableEntity {
         Description = description;
     }
 
+    public void MarkIndexed() {
+        Indexed = true;
+    }
+
     private void MakeDirty() {
         Indexed = false;
     }

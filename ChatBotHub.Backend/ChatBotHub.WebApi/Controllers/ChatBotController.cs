@@ -1,5 +1,5 @@
-using ChatBotHub.Application.Attachments;
 using ChatBotHub.Application.ChatBots;
+using ChatBotHub.Application.Attachments;
 using ChatBotHub.WebApi.Mappers.Attachments;
 using ChatBotHub.WebApi.Mappers.ChatBots;
 using ChatBotHub.WebApi.Models.Attachments;
@@ -31,6 +31,12 @@ public class ChatBotController : BaseController {
         var attachments = await _attachmentQueryService.GetByIdsAsync(bot?.AttachmentsIds ?? []);
 
         return ExtendedChatBotMapper.Map(bot, attachments);
+    }
+
+    [HttpGet]
+    public async Task<List<ChatBotModel>> GetAll() {
+        var chatBots = await _chatBotQueryService.GetAllAsync();
+        return chatBots.Select(e => ChatBotMapper.Map(e)).ToList();
     }
 
     [HttpPut("{id:guid}")]

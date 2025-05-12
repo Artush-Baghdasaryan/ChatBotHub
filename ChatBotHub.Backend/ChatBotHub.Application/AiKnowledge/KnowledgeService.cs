@@ -10,18 +10,21 @@ public class KnowledgeService : IKnowledgeService {
     private readonly IAiKnowledgeClient _client;
     private readonly IChatBotQueryService _chatBotQueryService;
     private readonly IAttachmentQueryService _attachmentQueryService;
+    private readonly IAttachmentCommandService _attachmentCommandService;
     private readonly IFileQueryService _fileQueryService;
 
     public KnowledgeService(
         IAiKnowledgeClient client,
         IChatBotQueryService chatBotQueryService,
         IAttachmentQueryService attachmentQueryService,
-        IFileQueryService fileQueryService
+        IFileQueryService fileQueryService,
+        IAttachmentCommandService attachmentCommandService
     ) {
         _client = client;
         _chatBotQueryService = chatBotQueryService;
         _attachmentQueryService = attachmentQueryService;
         _fileQueryService = fileQueryService;
+        _attachmentCommandService = attachmentCommandService;
     }
 
     public async Task IndexKnowledgeAsync(Guid botId) {
@@ -43,13 +46,14 @@ public class KnowledgeService : IKnowledgeService {
         }
 
         await _client.IndexAttachmentsAsync(botId, indexRequests);
+        await _attachmentCommandService.MakeAttachmentsIndexed(attachments);
     }
 
     private async Task<List<Attachment>> GetAttachmentsToIndex(Guid botId) {
         var bot = await _chatBotQueryService.RequireAsync(botId);
         var attachments = await _attachmentQueryService.GetByIdsAsync(bot.AttachmentsIds);
         return attachments.Where(a => !a.Indexed).ToList();
-    } 
+    }
 
     public async Task RemoveKnowledgeAsync(Guid botId, Guid attachmentId) {
         var bot = await _chatBotQueryService.RequireAsync(botId);

@@ -67,7 +67,8 @@ builder.Services
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtOptions"));
 builder.Services.Configure<AiKnowledgeOptions>(builder.Configuration.GetSection("AiKnowledgeOptions"));
 
-builder.Services
+builder
+    .Services
     .AddScoped<IAccountQueryService, AccountQueryService>()
     .AddScoped<IAccountCommandService, AccountCommandService>()
     .AddScoped<IAccountAuthenticationService, AccountAuthenticationService>()
@@ -80,8 +81,7 @@ builder.Services
     .AddScoped<ISessionQueryService, SessionQueryService>()
     .AddScoped<ISessionCommandService, SessionCommandService>()
     .AddScoped<IAiKnowledgeClient, AiKnowledgeClient>()
-    .AddScoped<IKnowledgeService, KnowledgeService>()
-    .AddScoped<IKnowledgeQueryService, KnowledgeQueryService>();
+    .AddScoped<IKnowledgeService, KnowledgeService>();
 #endregion
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {

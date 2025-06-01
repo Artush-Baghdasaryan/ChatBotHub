@@ -1,7 +1,6 @@
 from typing import Annotated, List
 from fastapi import Depends
 from llama_index.core import StorageContext, VectorStoreIndex, Document
-from sympy.matrices.expressions.matadd import factor_of
 
 from app.document_parsers.document_parser_provider import DocumentParserProvider
 from app.models import IndexRequest
@@ -17,44 +16,37 @@ class IndexService:
 
     def index(
         self,
-        bot_id: str,
         requests: List[IndexRequest]
-    ) -> VectorStoreIndex:
+    ) -> None:
         """Creates or updates a vector index for the given bot_id using the provided requests.
         
         Args:
-            bot_id: Bot identifier
             requests: List of index requests to process
-            
-        Returns:
-            VectorStoreIndex: The created or updated index
         """
-        
-        documents = self.__get_documents(requests)
-        print("documents are created", documents)
 
-        if self.__chroma_service.collection_exists(bot_id):
-            return self.__update_index(bot_id, documents)
+        for request in requests:
+            documents = self.__get_documents(request)
+            print("documents are created", documents)
 
-        return self.__index(bot_id, documents)
+            if self.__chroma_service.collection_exists(request.attachment_id):
+                self.__update_index(request.attachment_id, documents)
+
+            self.__index(request.attachment_id, documents)
 
 
     @staticmethod
-    def __get_documents(requests: List[IndexRequest]) -> List[Document]:
+    def __get_documents(request: IndexRequest) -> List[Document]:
         """Converts index requests into LlamaIndex documents using appropriate factories.
-        
+
         Args:
-            requests: List of index requests to convert
-            
+            request: Request with attachment data
+
         Returns:
             List[Document]: Generated documents
         """
-        documents = []
-        for request in requests:
-            factory = DocumentParserProvider.get_parser(request)
-            documents_for_req = factory.create_documents()
-            documents.extend(documents_for_req)
 
+        factory = DocumentParserProvider.get_parser(request)
+        documents = factory.create_documents()
         return documents
 
 

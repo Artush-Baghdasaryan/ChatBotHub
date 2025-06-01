@@ -1,5 +1,6 @@
 ﻿using ChatBotHub.Application.Attachments.Exceptions;
 using ChatBotHub.Application.Attachments.Requests;
+using ChatBotHub.Application.Files;
 using ChatBotHub.Domain.Attachments;
 
 namespace ChatBotHub.Application.Attachments;
@@ -7,19 +8,27 @@ namespace ChatBotHub.Application.Attachments;
 public class AttachmentCommandService : IAttachmentCommandService {
     private readonly IAttachmentRepository _repository;
     private readonly IAttachmentQueryService _queryService;
+    private readonly IFileQueryService _fileQueryService;
 
     public AttachmentCommandService(
         IAttachmentRepository repository,
-        IAttachmentQueryService queryService
+        IAttachmentQueryService queryService,
+        IFileQueryService fileQueryService
     ) {
         _repository = repository;
         _queryService = queryService;
+        _fileQueryService = fileQueryService;
     }
 
     public async Task<Attachment> CreateAsync(SaveAttachmentRequest request) {
-        var attachment = new Attachment(request.FileId, request.Description);
-        await _repository.InsertAsync(attachment);
+        var file = await _fileQueryService.RequireByIdAsync(request.FileId);
+        var attachment = new Attachment(
+            request.FileId,
+            file.FileName,
+            request.Description
+        );
 
+        await _repository.InsertAsync(attachment);
         return attachment;
     }
 

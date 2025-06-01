@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Text.Json;
+using ChatBotHub.Application.AiKnowledge.Models.Requests;
 using ChatBotHub.Application.AiKnowledge.Options;
 using ChatBotHub.Application.AiKnowledge.Requests;
 using Microsoft.Extensions.Options;
@@ -13,10 +14,10 @@ public class AiKnowledgeClient : IAiKnowledgeClient {
         _options = options.Value;
     }
     
-    public async Task IndexAttachmentsAsync(Guid botId, List<IndexKnowledgeRequest> requests) {
+    public async Task IndexAttachmentsAsync(List<IndexKnowledgeRequest> requests) {
         using var httpClient = new HttpClient();
 
-        var url = $"{_options.BaseUrl}/{botId}/index";
+        var url = $"{_options.BaseUrl}/index";
         var request = new HttpRequestMessage(HttpMethod.Post, url);
         request.Content = GetStringContent(requests);
         SetAuthorizationHeader(request);
@@ -25,10 +26,10 @@ public class AiKnowledgeClient : IAiKnowledgeClient {
         response.EnsureSuccessStatusCode();
     }
 
-    public async Task RemoveAttachmentIndexAsync(Guid botId, Guid attachmentId) {
+    public async Task RemoveAttachmentIndexAsync(Guid attachmentId) {
         using var httpClient = new HttpClient();
 
-        var url = $"{_options.BaseUrl}/{botId}/remove_index?attachmentId={attachmentId}";
+        var url = $"{_options.BaseUrl}/{attachmentId}/remove_index";
         var request = new HttpRequestMessage(HttpMethod.Delete, url);
         SetAuthorizationHeader(request);
 
@@ -36,10 +37,10 @@ public class AiKnowledgeClient : IAiKnowledgeClient {
         response.EnsureSuccessStatusCode();
     }
 
-    public async Task<string> QueryAsync(Guid botId, QueryRequest request) {
+    public async Task<string> QueryAsync(ExternalQueryKnowledgeRequest request) {
         using var httpClient = new HttpClient();
 
-        var url = $"{_options.BaseUrl}/{botId}/query";
+        var url = $"{_options.BaseUrl}/query";
         var httpRequest = new HttpRequestMessage(HttpMethod.Post, url);
         httpRequest.Content = GetStringContent(request);
         SetAuthorizationHeader(httpRequest);

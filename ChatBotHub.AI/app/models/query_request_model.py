@@ -1,7 +1,10 @@
 from enum import Enum
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel
+
+from app.models.chat_bot_model import ChatBotModel
+
 
 class MessageRoleType(Enum):
     USER = 0
@@ -14,7 +17,7 @@ class Message(BaseModel):
 
 
 class QueryRequestModel(BaseModel):
+    chat_bot: ChatBotModel
+    session_id: Optional[str] = None
     query: str
-    context: List[Message]
-
 

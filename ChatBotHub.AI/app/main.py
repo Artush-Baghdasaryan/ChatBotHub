@@ -2,6 +2,7 @@ from typing import Annotated, List
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import Body, Depends, FastAPI, File, Form, UploadFile
 from dotenv import load_dotenv
+
 import os
 
 from app.core.dependencies import verify_api_key
@@ -24,9 +25,8 @@ app.add_middleware(
 
 load_dotenv()
 
-@app.post("/{bot_id}/index")
+@app.post("/index")
 def index(
-    bot_id: str,
     index_requests: Annotated[List[IndexRequestModel], Body(...)],
     index_service: Annotated[IndexService, Depends(IndexService)],
     #api_key: Annotated[str, Depends(verify_api_key)]
@@ -34,31 +34,28 @@ def index(
     """Index documents for a specific bot.
     
     Args:
-        bot_id: Unique identifier for the bot
         index_requests: List of documents to be indexed
     """
-    print("got the endpoint", bot_id)
+    print("got the endpoint")
     requests = [IndexRequest.map(e) for e in index_requests]
-    index_service.index(bot_id, requests)
+    index_service.index(requests)
 
     print("index created")
 
 
-@app.get("/{bot_id}/query")
-def query(
-    bot_id: str,
+@app.post("/query")
+async def query(
     query_request: Annotated[QueryRequestModel, Body(...)],
     query_service: Annotated[QueryService, Depends(QueryService)],
     #api_key: Annotated[str, Depends(verify_api_key)]
 ) -> str:
-    print("got in endpoint")
     """Query the indexed documents for a specific bot.
     
     Args:
-        bot_id: Unique identifier for the bot
         query_request: Query parameters and text
         
     Returns:
         str: Response to the query
     """
-    return query_service.query(bot_id, query_request)
+    print("got in endpoint")
+    return await query_service.query(query_request)

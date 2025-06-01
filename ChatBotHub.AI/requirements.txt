@@ -6,3 +6,5 @@ pydantic==2.10.4
 starlette==0.41.3
 
 llama-index-core~=0.12.8
+python-dotenv~=1.1.0
+sympy~=1.14.0

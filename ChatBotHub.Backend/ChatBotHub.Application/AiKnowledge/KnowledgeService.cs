@@ -1,4 +1,6 @@
-﻿using ChatBotHub.Application.AiKnowledge.Requests;
+﻿using ChatBotHub.Application.AiKnowledge.Mappers;
+using ChatBotHub.Application.AiKnowledge.Models.Requests;
+using ChatBotHub.Application.AiKnowledge.Requests;
 using ChatBotHub.Application.Attachments;
 using ChatBotHub.Application.ChatBots;
 using ChatBotHub.Application.Files;
@@ -45,7 +47,7 @@ public class KnowledgeService : IKnowledgeService {
             });
         }
 
-        await _client.IndexAttachmentsAsync(botId, indexRequests);
+        await _client.IndexAttachmentsAsync(indexRequests);
         await _attachmentCommandService.MakeAttachmentsIndexed(attachments);
     }
 
@@ -54,11 +56,24 @@ public class KnowledgeService : IKnowledgeService {
         var attachments = await _attachmentQueryService.GetByIdsAsync(bot.AttachmentsIds);
         return attachments.Where(a => !a.Indexed).ToList();
     }
-
-    public async Task RemoveKnowledgeAsync(Guid botId, Guid attachmentId) {
+    
+    public async Task<string> QueryKnowledgeAsync(
+        Guid botId,
+        QueryKnowledgeRequest request,
+        Guid? sessionId = null
+    ) {
         var bot = await _chatBotQueryService.RequireAsync(botId);
-        if (bot.AttachmentsIds.Contains(attachmentId)) {
-            await _client.RemoveAttachmentIndexAsync(botId, attachmentId);
-        }
+        var attachments = await _attachmentQueryService.GetByIdsAsync(bot.AttachmentsIds);
+        var externalRequest = new ExternalQueryKnowledgeRequest {
+            Query = request.Query,
+            ChatBot = ExternalChatBotModelMapper.Map(bot, attachments),
+            SessionId = sessionId
+        };
+        
+        return await _client.QueryAsync(externalRequest);
+    }
+
+    public Task RemoveKnowledgeAsync(Guid botId, Guid attachmentId) {
+         return _client.RemoveAttachmentIndexAsync(attachmentId);
     }
 }

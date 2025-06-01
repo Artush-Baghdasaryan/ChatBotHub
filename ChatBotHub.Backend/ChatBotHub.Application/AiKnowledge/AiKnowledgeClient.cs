@@ -2,7 +2,6 @@
 using System.Text.Json;
 using ChatBotHub.Application.AiKnowledge.Models.Requests;
 using ChatBotHub.Application.AiKnowledge.Options;
-using ChatBotHub.Application.AiKnowledge.Requests;
 using Microsoft.Extensions.Options;
 
 namespace ChatBotHub.Application.AiKnowledge;

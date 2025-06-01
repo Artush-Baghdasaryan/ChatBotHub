@@ -14,8 +14,10 @@ public static class AttachmentMapper {
 
         return new AttachmentModel {
             Id = attachment.Id,
+            Name = attachment.Name,
             Description = attachment.Description,
-            Audit = AuditMapper.Map(attachment.Audit),
+            Indexed = attachment.Indexed,
+            Audit = AuditMapper.Map(attachment.Audit)
         };
     }
 }

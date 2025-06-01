@@ -9,15 +9,18 @@ public class AttachmentCommandService : IAttachmentCommandService {
     private readonly IAttachmentRepository _repository;
     private readonly IAttachmentQueryService _queryService;
     private readonly IFileQueryService _fileQueryService;
+    private readonly IFileCommandService _fileCommandService;
 
     public AttachmentCommandService(
         IAttachmentRepository repository,
         IAttachmentQueryService queryService,
-        IFileQueryService fileQueryService
+        IFileQueryService fileQueryService,
+        IFileCommandService fileCommandService
     ) {
         _repository = repository;
         _queryService = queryService;
         _fileQueryService = fileQueryService;
+        _fileCommandService = fileCommandService;
     }
 
     public async Task<Attachment> CreateAsync(SaveAttachmentRequest request) {
@@ -34,6 +37,10 @@ public class AttachmentCommandService : IAttachmentCommandService {
 
     public async Task<Attachment> UpdateAsync(Guid id, SaveAttachmentRequest request) {
         var attachment = await _queryService.RequireAsync(id);
+
+        if (request.FileId != attachment.FileId) {
+            await _fileCommandService.DeleteAsync(attachment.FileId); // TODO: unindex
+        }
         
         attachment.SetFileId(request.FileId);
         attachment.SetDescription(request.Description);

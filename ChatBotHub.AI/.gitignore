@@ -6,6 +6,4 @@ venv/
 *.pyo
 *.pyd
 
-
-
 chroma_db/

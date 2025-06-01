@@ -5,7 +5,7 @@ namespace ChatBotHub.Application.Sessions;
 
 public interface ISessionCommandService {
     Task<Session> CreateSessionAsync(Guid botId);
-    Task<Session> AddMessageAsync(Guid id, AddMessageRequest request);
+    Task<Session> AddMessagesAsync(Guid id, List<AddMessageRequest> request);
     Task DeleteAsync(Guid id);
 }
 

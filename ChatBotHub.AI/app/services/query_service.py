@@ -23,10 +23,9 @@ class QueryService:
         query_engine_tools = self.__collect_query_engine_tools(query_req.chat_bot.attachments)
         agent = ChatBotAgent(
             chat_bot_model=query_req.chat_bot,
-            session_id=query_req.session_id,
-            tools=query_engine_tools
+            tools=query_engine_tools,
+            chat_history=query_req.chat_history
         )
-
 
         return await agent.query(query_req.query)
 
@@ -36,6 +35,7 @@ class QueryService:
             self.__get_query_engine_tool(attachment)
             for attachment in attachments
         ]
+
 
     def __get_query_engine_tool(self, attachment: AttachmentModel):
         """Get a query engine instance for a specific attachment.

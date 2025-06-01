@@ -7,6 +7,7 @@ public static class SaveAttachmentRequestMapper {
     public static SaveAttachmentRequest Map(SaveAttachmentRequestModel model) {
         return new SaveAttachmentRequest {
             FileId = model.FileId,
+            Name = model.Name,
             Description = model.Description,
         };
     }

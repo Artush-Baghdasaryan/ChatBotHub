@@ -22,4 +22,8 @@ public class ChatBotQueryService : IChatBotQueryService {
     public Task<List<ChatBot>> GetAllAsync() {
         return _repository.GetAllAsync();
     }
+
+    public Task<bool> ExistsAsync(Guid id) {
+        return _repository.ExistsAsync(id);
+    }
 }

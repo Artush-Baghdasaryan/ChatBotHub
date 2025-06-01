@@ -18,6 +18,6 @@ class Message(BaseModel):
 
 class QueryRequestModel(BaseModel):
     chat_bot: ChatBotModel
-    session_id: Optional[str] = None
     query: str
+    chat_history: List[Message]
 

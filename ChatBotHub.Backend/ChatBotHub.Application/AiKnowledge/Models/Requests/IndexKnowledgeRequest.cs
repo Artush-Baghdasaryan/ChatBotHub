@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace ChatBotHub.Application.AiKnowledge.Requests;
+namespace ChatBotHub.Application.AiKnowledge.Models.Requests;
 
 public record IndexKnowledgeRequest {
     [JsonPropertyName("attachment_id")]

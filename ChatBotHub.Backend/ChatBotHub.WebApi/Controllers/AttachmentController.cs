@@ -1,4 +1,5 @@
 using ChatBotHub.Application.Attachments;
+using ChatBotHub.Application.Attachments.Requests;
 using ChatBotHub.WebApi.Mappers.Attachments;
 using ChatBotHub.WebApi.Models.Attachments;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,12 @@ public class AttachmentController : BaseController {
     [HttpGet("{id:guid}")]
     public async Task<AttachmentModel?> GetById(Guid id) {
         var attachment = await _attachmentQueryService.GetByIdAsync(id);
+        return AttachmentMapper.Map(attachment);
+    }
+
+    [HttpPut("{id:guid}")]
+    public async Task<AttachmentModel> Update(Guid id, SaveAttachmentRequest request) {
+        var attachment = await _attachmentCommandService.UpdateAsync(id, request);
         return AttachmentMapper.Map(attachment);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using ChatBotHub.Application.AiKnowledge.Models.Requests;
-using ChatBotHub.Application.AiKnowledge.Requests;
 
 namespace ChatBotHub.Application.AiKnowledge;
 

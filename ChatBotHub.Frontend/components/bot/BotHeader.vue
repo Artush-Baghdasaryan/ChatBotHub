@@ -20,7 +20,6 @@
   <BotDrawer 
     :isOpen="isDrawerOpen" 
     title="Меню"
-    width="300px"
     @close="closeDrawer" />
 </template>
 <script setup>

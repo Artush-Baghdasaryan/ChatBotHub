@@ -16,7 +16,10 @@ const { width } = useWindowSize()
 
 const openFileList = ref(true);
 
-const updateFileList = () => openFileList.value = !openFileList.value;
+const updateFileList = () => {
+   if (!width.isTablet) openFileList.value = !openFileList.value;
+   else openFileList.value = false;
+};
 
 watch(width, () => {
   if (width.value.isTablet) openFileList.value = false;

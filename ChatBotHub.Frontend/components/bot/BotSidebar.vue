@@ -48,54 +48,138 @@
     </div>
     <BotDialog
       :isOpen="isModalOpen" 
-      title="Пример диалога"
-      @close="closeModal" />
+      title="Добавить нового бота"
+      @close="closeModal">
+      <form @submit.prevent="handleSubmit" class="dialogForm">
+        <BotInput
+          v-model="formData.title"
+          label="Название"
+          name="title"
+          type="text"
+          placeholder="Введите название"
+          :error="formErrors.title"
+          :validation-rules="validationRules.title"
+          @validate="validate"
+        />
+        <BotInput
+          v-model="formData.description"
+          label="Описание"
+          name="description"
+          type="text"
+          placeholder="Введите описание"
+          :error="formErrors.description"
+          :validation-rules="validationRules.description"
+          @validate="validate"
+        />
+        <div class="dialogActions">
+          <BotButton
+            buttonType="fulled"
+            title="Создать бота"
+            type="submit"
+            :disabled="isSubmitting" />
+          <BotButton
+            buttonType="outlined"
+            title="Отмена"
+            @click="closeModal" />
+        </div>
+      </form>
+    </BotDialog>
   </aside>
 </template>
 
 <script setup>
+import { useValidation } from '@/composables/useValidation'
 
-const isModalOpen = ref(false);
+const { formErrors, validateField, validateForm } = useValidation()
 
-const openModal = () => {
-  isModalOpen.value = true;
-};
+// Состояния интерфейса
+const isMenuOpen = ref(true)
+const isModalOpen = ref(false)
+const isSubmitting = ref(false)
 
-const closeModal = () => {
-  isModalOpen.value = false;
-};
+// Данные формы
+const formData = reactive({
+  title: '',
+  description: '',
+})
 
-const isMenuOpen = ref(true);
-const botList = [
+// Правила валидации
+const validationRules = {
+  title: ['required', 'min:3', 'max:50'],
+  description: ['required', 'min:3', 'max:50'],
+}
+
+// Список ботов
+const botList = ref([
   {
     id: 1,
     title: 'Бот для документации',
     date: '19.03.2025',
     files: 2,
   },
-  {
-    id: 2,
-    title: 'Бот для tg канала',
-    date: '25.02.2025',
-    files: 1,
-  },
-  {
-    id: 3,
-    title: 'Бот: помощь по доставке',
-    date: '18.02.2025',
-    files: 4,
-  },
-  {
-    id: 4,
-    title: 'Бот для интренет-магазина',
-    date: '06.04.2025',
-    files: 2,
-  },
-];
+  // ... остальные боты
+])
+
+// Валидация поля
+const validate = (fieldName) => {
+  formErrors[fieldName] = validateField(formData[fieldName], validationRules[fieldName])
+}
+
+// Отправка формы
+const handleSubmit = async () => {
+  // Валидируем все поля
+  Object.keys(formData).forEach(field => validate(field))
+  
+  // Проверяем ошибки
+  if (Object.values(formErrors).some(Boolean)) {
+    console.error('Form has validation errors', formErrors)
+    return
+  }
+
+  isSubmitting.value = true
+  
+  try {
+    console.log('Creating bot:', formData)
+    
+    // Имитация запроса
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    
+    // Добавляем нового бота
+    botList.value.unshift({
+      id: Date.now(),
+      title: formData.title,
+      date: new Date().toLocaleDateString('ru-RU'),
+      files: 0
+    })
+    
+    closeModal()
+    
+  } catch (error) {
+    console.error('Error creating bot:', error)
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+// Сброс формы
+const resetForm = () => {
+  formData.title = ''
+  Object.keys(formErrors).forEach(key => formErrors[key] = '')
+}
+
+// Управление модальным окном
+const openModal = () => {
+  isModalOpen.value = true
+}
+
+const closeModal = () => {
+  isModalOpen.value = false
+  resetForm()
+}
 
 const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value;
-};
+  isMenuOpen.value = !isMenuOpen.value
+}
 </script>
 
 <style lang="scss" scoped>
@@ -230,5 +314,11 @@ const toggleMenu = () => {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
+}
+
+.dialogActions {
+  margin-top: 0.8rem;
+  display: flex;
+  justify-content: space-between;
 }
 </style>

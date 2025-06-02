@@ -25,7 +25,7 @@ const props = defineProps({
   },
   buttonType: {
     type: String,
-    validator: (value) => ['icon', 'icon-round', 'icon-full', 'icon-full-center', 'icon-info', 'outlined', 'link', 'fulled'].includes(value),
+    validator: (value) => ['icon', 'icon-round', 'icon-full', 'icon-full-center', 'icon-info', 'outlined-min', 'link', 'fulled'].includes(value),
   },
 });
 
@@ -35,7 +35,7 @@ const iconSize = {
   'icon-full': 36, //
   'icon-info': 24,
   'icon-full-center': 24,
-  'outlined': 16, //
+  'outlined-min': 16, //
   // 'link': 20,
   // 'fulled': 24, 
 };
@@ -123,7 +123,7 @@ const iconSize = {
     color: #A5B8F1;
   }
 
-  &.outlined {
+  &.outlined-min {
     display: flex;
     gap: 0.4rem;
     padding: 0 0.6rem;
@@ -141,11 +141,11 @@ const iconSize = {
     border: none;
     display: flex;
     justify-content: center;
-    width: 100%;
     height: 40px;
     color: #404E7B;
     font-size: 1.6rem;
     text-transform: none;
+    padding: 0 2rem;
 
     &:hover {
       background-color: #97ade8;
@@ -160,6 +160,18 @@ const iconSize = {
       box-shadow: none;
       cursor: default;
     }
+  }
+
+  &.outlined {
+    display: flex;
+    justify-content: center;
+    padding: 0 2rem;
+    background: none;
+    height: 4rem;
+    border-radius: 2rem;
+    font-size: 1.6rem;
+    color: #A5B8F1;
+    border: 0.1rem solid #A5B8F1;
   }
 
   &.link {

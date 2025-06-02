@@ -77,7 +77,7 @@ const closeModal = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -91,21 +91,22 @@ const closeModal = () => {
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   max-width: 90%;
-  width: 500px;
+  width: 50rem;
   max-height: 90vh;
   overflow-y: auto;
+  padding: 1.6rem;
 }
 
 .modal__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding-bottom: 1.2rem;
 }
 
-.modal__content {
-  padding: 20px;
-}
+/* .modal__content {
+
+} */
 
 .modal__footer {
   padding: 16px 20px;

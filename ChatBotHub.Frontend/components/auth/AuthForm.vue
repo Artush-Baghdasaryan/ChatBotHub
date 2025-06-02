@@ -5,32 +5,18 @@
         <label class="authForm__label">
           {{ data_authForm[mode].label }}
         </label>
-        <div
+        <BotInput
           v-for="(input, index) in data_authForm[mode].inputs"
           :key="index"
-          class="formInput">
-          <div class="formInput__name">{{ input.name }}</div>
-          <input
-            v-model="formData[input.type]"
-            :type="input.type === 'password' && !openPassword ? 'password' : 'text'"
-            class="formInput__input"
-            :name="input.type"
-            :id="input.type"
-            :placeholder="input.name"
-            @blur="validate(input.type)"
-            @input="validate(input.type)"/>
-          <div class="formInput__error">
-            {{ data_formErrors[input.type] }}
-          </div>
-          <div
-            v-if="input.type === 'password'"
-            class="formInput__closeEye"
-            @click="() => openPassword = !openPassword">
-            <svg width="24" height="24" viewBox="0 0 24 24">
-              <use :xlink:href="openPassword ? '/sprite.svg#lucide--eye' : '/sprite.svg#lucide--eye-off'"/>
-            </svg>
-          </div>
-        </div>
+          v-model="formData[input.type]"
+          :label="input.name"
+          :name="input.type"
+          :type="input.type"
+          :placeholder="input.name"
+          :error="data_formErrors[input.type]"
+          :validation-rules="input.validate"
+          @validate="validate"
+        />
         <BotButton
           buttonType="fulled"
           :title="data_authForm[mode].button"
@@ -47,10 +33,12 @@
   </div>
 </template>
 <script setup>
-const formData = reactive({});
+import { useValidation } from '@/composables/useValidation'
 
-const mode = ref('login');
-const openPassword = ref(false);
+const { formErrors: data_formErrors, validateField } = useValidation()
+
+const formData = reactive({})
+const mode = ref('login')
 
 const data_authForm = {
   login: {
@@ -95,97 +83,76 @@ const data_authForm = {
       mode: 'login',
     },
   },
-};
-
-// const data_authFormButtons = [
-//   {
-//     buttonType: 'fulled',
-//     title: data_authForm[mode].button,
-//     class: 'formInput__button',
-//     type: 'submit',
-//   },
-//   {
-//     buttonType: 'link',
-//     title: data_authForm[mode].button,
-//     class: 'formInput__addition',
-//     type: 'submit',
-//   },
-// ]
-
-data_authForm[mode.value].inputs.forEach(input => {
-  formData[input.type] = '';
-})
-
-const data_formErrors = reactive(data_authForm[mode.value].inputs.reduce((result, item) => {
-  return {
-    ...result,
-    [item.type]: null,
-  }
-}, {}));
-
-const getWordEnding = (count) => {
-  const lastTwo = count % 100;
-  const lastOne = count % 10;
-  
-  if (lastTwo >= 11 && lastTwo <= 14) return 'ов';
-  
-  switch (lastOne) {
-    case 1: return '';
-    case 2:
-    case 3:
-    case 4: return 'а';
-    default: return 'ов';
-  }
-};
-
-const validate = (field) => {
-  const value = formData[field];
-  const validateTypes = {
-    required: {
-      pattern: /^required$/,
-      test: () => !value.trim(),
-      message: () => 'Обязательное поле!',
-    },
-    min: {
-      pattern: /^min:(\d+)$/,
-      test: (match) => value.length < parseInt(match[1]),
-      message: (match) => `Минимум ${match[1]} символ${getWordEnding(parseInt(match[1]))}`,
-    },
-    max: {
-      pattern: /^max:(\d+)$/,
-      test: (match) => value.length > parseInt(match[1]),
-      message: (match) => `Максимум ${match[1]} символ${getWordEnding(parseInt(match[1]))}`,
-    },
-  };
-
-  const data_validate = data_authForm[mode.value].inputs.find((item) => item.type === field).validate;
-  if (!data_validate) return;
-
-  for (const rule of data_validate) { // валидация для полей
-    for (const validatorName in validateTypes) { // поиск нужного правила
-      const validator = validateTypes[validatorName];
-      const match = rule.match(validator.pattern);
-      if (match) {
-        if (validator.test(match)) {
-          data_formErrors[field] = validator.message(match);
-          return; // Прекращаем при первой ошибке
-        }
-        break; // Переходим к следующему правилу
-      }
-    };
-    data_formErrors[field] = null;
-  }
-};
-
-const handleSubmit = () => {
-  if (true) {
-    console.log('Form is valid, submitting:', formData);
-    // Отправка данных на сервер
-  } else {
-    console.log('Form has errors');
-  }
 }
 
+// Инициализация formData
+data_authForm[mode.value].inputs.forEach(input => {
+  formData[input.type] = ''
+})
+
+const validate = (field) => {
+  const inputConfig = data_authForm[mode.value].inputs.find(i => i.type === field)
+  data_formErrors[field] = validateField(formData[field], inputConfig.validate)
+}
+
+const handleSubmit = async () => {
+  // 1. Валидация всех полей
+  data_authForm[mode.value].inputs.forEach(input => {
+    validate(input.type, formData[input.type]);
+  })
+
+  // 2. Проверка ошибок валидации
+  if (Object.values(data_formErrors).some(Boolean)) {
+    console.error('Validation errors:', data_formErrors)
+    return
+  }
+
+  // 3. Подготовка данных для отправки
+  const payload = data_authForm[mode.value].inputs.reduce((acc, input) => {
+    acc[input.type] = formData[input.type].trim()
+    return acc
+  }, {})
+
+  // 4. Отправка на сервер
+  // try {
+  //   const response = await fetch(data_authForm[mode.value].request, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Accept': 'application/json'
+  //     },
+  //     credentials: 'include', // если нужны куки
+  //     body: JSON.stringify(payload)
+  //   })
+
+  //   const data = await response.json()
+
+  //   if (!response.ok) {
+  //     // Обработка ошибок от сервера
+  //     if (data.errors) {
+  //       Object.entries(data.errors).forEach(([field, error]) => {
+  //         data_formErrors[field] = error
+  //       })
+  //     }
+  //     throw new Error(data.message || 'Failed to submit form')
+  //   }
+
+  //   // Успешная отправка
+  //   console.log('Success:', data)
+    
+  //   // Редирект или другие действия
+  //   if (mode.value === 'login') {
+  //     // Перенаправление после входа
+  //   } else {
+  //     // Действия после регистрации
+  //     mode.value = 'login' // переключить на форму входа
+  //   }
+
+  // } catch (error) {
+  //   console.error('Submission error:', error)
+  //   // Можно добавить отображение ошибки пользователю
+  // }
+}
 </script>
 <style lang="scss">
 .icon {
@@ -292,6 +259,7 @@ const handleSubmit = () => {
 
   &__button {
     margin-top: 1.6rem;
+    width: 100%;
   }
 
   &__addition {

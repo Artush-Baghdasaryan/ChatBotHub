@@ -8,11 +8,11 @@
 				@keydown.enter.exact.prevent="handleSubmit"></textarea>
 			<div class="inputSection__buttons">
 				<BotButton
-					buttonType="outlined"
+					buttonType="outlined-min"
 					title="Удалить чат"
 					icon="material-symbols--delete-outline-rounded" />
 				<BotButton
-					buttonType="outlined"
+					buttonType="outlined-min"
 					title="Придумать"
 					icon="bi--stars" />
 			</div>

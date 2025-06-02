@@ -34,6 +34,7 @@
     @close="closeModal" />
 </template>
 <script setup>
+
 const props = defineProps({
   openSection: {
     type: Boolean,

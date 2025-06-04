@@ -27,68 +27,79 @@
           :title="data_authForm[mode].addition.text"
           class="formInput__addition"
           type="button"
-          @click="() => mode = data_authForm[mode].addition.mode" />
+          @click="toggleMode" />
       </form>
     </div>
+    <BotMessage
+      v-model="message.open"
+      :text="message.text"
+      :duration="2000"
+      @close="message.open = false"
+    />
   </div>
 </template>
+
 <script setup>
 import { useValidation } from '@/composables/useValidation'
 
 const { formErrors: data_formErrors, validateField } = useValidation()
 
-const formData = reactive({})
-const mode = ref('login')
+const message = reactive({
+  open: false,
+  text: ''
+})
+
+const showMessage = (text) => {
+  message.text = text
+  message.open = true
+}
+
+const isLoading = ref(false)
+
+const mode = ref('login');
 
 const data_authForm = {
   login: {
     label: 'Вход',
     inputs: [
-      {
-        name: 'Логин',
-        type: 'login',
-        validate: ['required', 'min:3', 'max:12'],
-      },
-      {
-        name: 'Пароль',
-        type: 'password',
-        validate: ['required', 'min:6'],
-      },
+      { name: 'Почта', type: 'email', validate: ['required'], },
+      { name: 'Пароль', type: 'password', validate: ['required', 'min:6'], },
     ],
     button: 'Войти',
-    request: 'api/auth/login',
-    addition: {
-      text: 'Регистрация',
-      mode: 'register',
+    endpoint: 'accounts/login',
+    addition: { text: 'Регистрация', mode: 'register',
     },
   },
   register: {
     label: 'Регистрация',
     inputs: [
-      {
-        name: 'Логин',
-        type: 'login',
-        validate: ['required', 'min:3', 'max:12'],
-      },
-      {
-        name: 'Пароль',
-        type: 'password',
-        validate: ['required', 'min:6'],
-      },
+      { name: 'Имя', type: 'name', validate: ['required', 'min:3', 'max:12'], },
+      { name: 'Фамилия', type: 'lastName', validate: ['required', 'min:3', 'max:12'], },
+      { name: 'Почта', type: 'email', validate: ['required'], },
+      { name: 'Пароль', type: 'password', validate: ['required', 'min:6'], },
     ],
     button: 'Регистрация',
-    request: 'api/auth/register',
-    addition: {
-      text: 'Вход',
-      mode: 'login',
-    },
+    endpoint: 'accounts/register',
+    addition: { text: 'Вход', mode: 'login', },
   },
 }
 
-// Инициализация formData
-data_authForm[mode.value].inputs.forEach(input => {
-  formData[input.type] = ''
-})
+// Инициализация formData с реактивностью
+const formData = reactive({})
+
+// Функция для инициализации/очистки formData при смене режима
+const initFormData = () => {
+  data_authForm[mode.value].inputs.forEach(input => formData[input.type] = '')
+}
+
+// Инициализация при первом рендере
+initFormData()
+
+// Функция для переключения режима
+const toggleMode = () => {
+  mode.value = data_authForm[mode.value].addition.mode
+  initFormData()
+}
 
 const validate = (field) => {
   const inputConfig = data_authForm[mode.value].inputs.find(i => i.type === field)
@@ -96,64 +107,65 @@ const validate = (field) => {
 }
 
 const handleSubmit = async () => {
-  // 1. Валидация всех полей
-  data_authForm[mode.value].inputs.forEach(input => {
-    validate(input.type, formData[input.type]);
-  })
+  // Валидация всех полей
+  data_authForm[mode.value].inputs.forEach(input => validate(input.type))
 
-  // 2. Проверка ошибок валидации
-  if (Object.values(data_formErrors).some(Boolean)) {
-    console.error('Validation errors:', data_formErrors)
+  if (Object.values(data_formErrors).some(error => error)) {
+    showMessage('Пожалуйста, исправьте ошибки в форме')
     return
   }
 
-  // 3. Подготовка данных для отправки
-  const payload = data_authForm[mode.value].inputs.reduce((acc, input) => {
-    acc[input.type] = formData[input.type].trim()
-    return acc
-  }, {})
+  isLoading.value = true
+  
+  try {
+    const payload = data_authForm[mode.value].inputs.reduce((acc, input) => {
+      acc[input.type] = formData[input.type].trim()
+      return acc
+    }, {})
 
-  // 4. Отправка на сервер
-  // try {
-  //   const response = await fetch(data_authForm[mode.value].request, {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Accept': 'application/json'
-  //     },
-  //     credentials: 'include', // если нужны куки
-  //     body: JSON.stringify(payload)
-  //   })
+    console.log(payload);
 
-  //   const data = await response.json()
+    const response = await fetch(`${import.meta.env.VITE_API_URL}${data_authForm[mode.value].endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
 
-  //   if (!response.ok) {
-  //     // Обработка ошибок от сервера
-  //     if (data.errors) {
-  //       Object.entries(data.errors).forEach(([field, error]) => {
-  //         data_formErrors[field] = error
-  //       })
-  //     }
-  //     throw new Error(data.message || 'Failed to submit form')
-  //   }
+    const data = await response.json()
 
-  //   // Успешная отправка
-  //   console.log('Success:', data)
-    
-  //   // Редирект или другие действия
-  //   if (mode.value === 'login') {
-  //     // Перенаправление после входа
-  //   } else {
-  //     // Действия после регистрации
-  //     mode.value = 'login' // переключить на форму входа
-  //   }
+    if (!response.ok) {
+      throw new Error('Ошибка сервера')
+    }
 
-  // } catch (error) {
-  //   console.error('Submission error:', error)
-  //   // Можно добавить отображение ошибки пользователю
-  // }
+    if (mode.value === 'login') {
+      // Сохраняем токен и перенаправляем
+      // localStorage.setItem('authToken', data.token)
+      useCookie('authToken', {
+        maxAge: 60 * 60 * 24 * 7, // 1 неделя
+        secure: true,
+        sameSite: 'strict'
+      }).value = data.token
+      showMessage('Вход выполнен успешно!')
+      navigateTo('/bot');
+    } 
+    if (mode.value === 'register') {
+      // После регистрации переключаем на вход
+      mode.value = 'login'
+      initFormData()
+      showMessage('Регистрация прошла успешно!')
+    }
+  } catch (error) {
+    showMessage('Произошла ошибка при отправке данных')
+    console.error('Ошибка:', error)
+  } finally {
+    isLoading.value = false
+  }
 }
 </script>
+
 <style lang="scss">
 .icon {
   width: 24px;

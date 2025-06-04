@@ -1,14 +1,14 @@
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 
 export default function useWindowSize() {
-  const windowWidth = ref(window.innerWidth)
+  const windowWidth = ref(0) // Инициализируем нулем вместо window.innerWidth
 
   const breakpoints = {
-    phone: 576,     // < 576px
-    tablet: 768,    // ≥ 576px && < 768px
-    laptop: 992,    // ≥ 768px && < 992px
-    desktop: 1200,  // ≥ 992px && < 1200px
-    wide: 1400      // ≥ 1200px
+    phone: 576,
+    tablet: 768,
+    laptop: 992,
+    desktop: 1200,
+    wide: 1400
   }
 
   const updateWidth = () => {
@@ -25,11 +25,17 @@ export default function useWindowSize() {
   }))
 
   onMounted(() => {
-    window.addEventListener('resize', updateWidth)
+    // Устанавливаем начальное значение только на клиенте
+    if (typeof window !== 'undefined') {
+      windowWidth.value = window.innerWidth
+      window.addEventListener('resize', updateWidth)
+    }
   })
 
   onBeforeUnmount(() => {
-    window.removeEventListener('resize', updateWidth)
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('resize', updateWidth)
+    }
   })
 
   return { width }

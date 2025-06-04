@@ -25,7 +25,7 @@ const props = defineProps({
   },
   buttonType: {
     type: String,
-    validator: (value) => ['icon', 'icon-round', 'icon-full', 'icon-full-center', 'icon-info', 'outlined-min', 'link', 'fulled'].includes(value),
+    validator: (value) => ['icon', 'icon-round', 'icon-full', 'icon-full-center', 'icon-info', 'outlined', 'outlined-min', 'link', 'fulled'].includes(value),
   },
 });
 

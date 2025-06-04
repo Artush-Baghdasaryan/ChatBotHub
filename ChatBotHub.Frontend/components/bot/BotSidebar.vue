@@ -27,12 +27,10 @@
             </svg>
           </div>
         </div>
-        <!-- <BotButton
-          buttonType="icon-info"
-          icon="charm--menu-meatball"
-          class="sidebarBot__menu" 
-          @click="() => 1"/> -->
       </div>
+      <div
+        v-if="!botList"
+        class="sidebarBot__message">У вас нет ботов, добавьте с помощью кнопки выше</div>
     </nav>
     <div class="sidebarFooter">
       <BotButton
@@ -84,6 +82,11 @@
         </div>
       </form>
     </BotDialog>
+    <BotMessage 
+      v-model="message.open"
+      :text="message.text"
+      :duration="2000"
+      @close="message.open = false" />
   </aside>
 </template>
 
@@ -97,6 +100,15 @@ const isMenuOpen = ref(true)
 const isModalOpen = ref(false)
 const isSubmitting = ref(false)
 
+const message = reactive({
+  open: false,
+  text: ''
+})
+
+const showMessage = (text) => {
+  message.text = text
+  message.open = true
+}
 // Данные формы
 const formData = reactive({
   title: '',
@@ -109,20 +121,43 @@ const validationRules = {
   description: ['required', 'min:3', 'max:50'],
 }
 
+const formatDate = (dateString) => {
+  const date = new Date(dateString)
+  return new Intl.DateTimeFormat('ru-RU', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  }).format(date)
+}
+
 // Список ботов
-const botList = ref([
-  {
-    id: 1,
-    title: 'Бот для документации',
-    date: '19.03.2025',
-    files: 2,
+const { data: botList } = useFetch(`${import.meta.env.VITE_API_URL}chatbots`, {
+  method: 'GET',
+  transform: (response) => {
+    if (!response) return []
+    
+    return response.map((item) => ({
+      id: item.id,
+      title: item.name,
+      date: item.audit ? formatDate(item.audit.modifiedOn ?? item.audit.createdOn) : formatDate(),
+      files: item.attachmentsIds?.length ?? 0
+    }))
   },
-  // ... остальные боты
-])
+  onResponseError({ error }) {
+    // console.error('Error fetching bots:', error)
+  }
+})
 
 // Валидация поля
 const validate = (fieldName) => {
   formErrors[fieldName] = validateField(formData[fieldName], validationRules[fieldName])
+}
+
+// Сброс формы
+const resetForm = () => {
+  formData.title = ''
+  formData.description = ''
+  Object.keys(formErrors).forEach(key => formErrors[key] = '')
 }
 
 // Отправка формы
@@ -131,40 +166,41 @@ const handleSubmit = async () => {
   Object.keys(formData).forEach(field => validate(field))
   
   // Проверяем ошибки
-  if (Object.values(formErrors).some(Boolean)) {
-    console.error('Form has validation errors', formErrors)
-    return
-  }
+  if (Object.values(formErrors).some(Boolean)) return
 
   isSubmitting.value = true
   
   try {
-    console.log('Creating bot:', formData)
-    
-    // Имитация запроса
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    // Добавляем нового бота
-    botList.value.unshift({
-      id: Date.now(),
-      title: formData.title,
-      date: new Date().toLocaleDateString('ru-RU'),
-      files: 0
+    const payload = {
+      name: formData.title.trim(),
+      description: formData.description.trim()
+    }
+
+    const response = await fetch(`${import.meta.env.VITE_API_URL}chatbots`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${useCookie('authToken').value}`
+      },
+      body: JSON.stringify(payload)
     })
-    
+
+    if (!response.ok) {
+      throw new Error('Ошибка сервера при создании бота')
+    }
+
+    // Обновляем список ботов
+    refreshNuxtData()
+    showMessage('Бот успешно создан!')
+    resetForm()
     closeModal()
-    
   } catch (error) {
-    console.error('Error creating bot:', error)
+    showMessage('Произошла ошибка при создании бота')
+    console.error('Ошибка:', error)
   } finally {
     isSubmitting.value = false
   }
-}
-
-// Сброс формы
-const resetForm = () => {
-  formData.title = ''
-  Object.keys(formErrors).forEach(key => formErrors[key] = '')
 }
 
 // Управление модальным окном
@@ -295,6 +331,21 @@ const toggleMenu = () => {
     top: 0.2rem;
     right: 0.6rem;
     z-index: 2;
+  }
+
+  &__message {
+    width: 100%;
+    height: 16rem;
+    padding: 0.8rem;
+    border-radius: 8px;
+    color: #A5B8F1;
+    font-size: 1.8rem;
+    line-height: 2rem;
+    text-align: center;
+    background-color: #2C3963;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   // &__menuList {
